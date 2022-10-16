@@ -7,7 +7,7 @@ from .type import get_address_type, get_province_related_type
 
 
 class Parser(Immutable):
-    ERROR_MSG = 'The address has no such value.'
+    ERROR_MSG = "The address has no such value."
 
     def __init__(self, address: str) -> None:
         self.address = address
@@ -15,7 +15,7 @@ class Parser(Immutable):
         if not is_valid_str(self.address):
             raise InvalidValue(self.address)
 
-        split_address = self.address.split(',')
+        split_address = self.address.split(",")
         for el in split_address:
             if result := get_address_type(el):
                 self.parsed_address |= result
@@ -27,7 +27,7 @@ class Parser(Immutable):
 
     def __iter__(self):
         for k, v in self.parsed_address.items():
-            yield(k, v)
+            yield (k, v)
 
     def getprop(self, type: str) -> str:
         return self.parsed_address.get(type, self.ERROR_MSG)
@@ -37,8 +37,8 @@ class Parser(Immutable):
         if type not in PROVINCES[f_key]:
             return self.ERROR_MSG
 
-        if 'province' in self.parsed_address:
-            prov_val = self.parsed_address['province']
+        if "province" in self.parsed_address:
+            prov_val = self.parsed_address["province"]
             if prov_val in PROVINCES:
                 return PROVINCES[prov_val][type]
 
@@ -50,18 +50,18 @@ class Parser(Immutable):
     @property
     @lru_cache(maxsize=4)
     def island_group(self) -> str:
-        return self.getsprop('island_group')
+        return self.getsprop("island_group")
 
     @property
     @lru_cache(maxsize=4)
     def iso(self) -> str:
-        return self.getsprop('iso')
+        return self.getsprop("iso")
 
     @property
     @lru_cache(maxsize=4)
     def region(self) -> str:
-        return self.getsprop('region')
-    
+        return self.getsprop("region")
+
     @property
     def zip_code(self) -> str:
-        return self.getprop('zip_code')
+        return self.getprop("zip_code")

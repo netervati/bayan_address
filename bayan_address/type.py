@@ -5,15 +5,15 @@ from .lib.utils import clean_str
 def get_address_type(item: str) -> dict:
     stripped_item = item.strip()
     if is_valid_zipcode(stripped_item):
-        return { 'zip_code': stripped_item }
+        return {"zip_code": stripped_item}
 
     cleaned_address = clean_str(item)
     for k, v in ADDRESS_FORMAT.items():
         for el in v:
             if clean_str(el) in cleaned_address:
-                return { k: stripped_item }
+                return {k: stripped_item}
 
-    return { 'barangay': stripped_item }
+    return {"barangay": stripped_item}
 
 
 def get_province_related_type(val: str) -> bool:
