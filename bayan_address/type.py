@@ -1,3 +1,4 @@
+from typing import Union
 from .lib.data import ADDRESS_FORMAT, PROVINCES
 from .lib.utils import clean_str
 
@@ -16,7 +17,7 @@ def get_address_type(item: str) -> dict:
     return {"barangay": stripped_item}
 
 
-def get_province_related_type(val: str) -> bool:
+def get_province_related_type(val: str) -> Union[str, None]:
     cleaned_str = clean_str(val)
     for el in PROVINCES:
         if clean_str(el) in cleaned_str:
