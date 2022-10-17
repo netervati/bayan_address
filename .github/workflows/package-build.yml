@@ -1,4 +1,4 @@
-name: django
+name: bayan_address
 
 on: [push]
 
