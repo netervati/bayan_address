@@ -23,3 +23,12 @@ To directly access the value based on the address type, simply call the attribut
 >>> address.province
 'Pampanga'
 ```
+Additional attributes:
+```python
+>>> address.island_group
+'Luzon'
+>>> address.iso
+'PH-PAM'
+>>> address.region
+'III'
+```
