@@ -73,7 +73,10 @@ def strip_matching_data(val: str) -> bool:
             ).strip()
             if cleaned_element in cleaned_str:
                 stripped_address = re.sub(
-                    re.escape(cleaned_element), "", stripped_address, flags=re.IGNORECASE
+                    re.escape(cleaned_element),
+                    "",
+                    stripped_address,
+                    flags=re.IGNORECASE,
                 )
                 pre_selected_formats["city"] = cleaned_element
 

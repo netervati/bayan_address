@@ -40,7 +40,9 @@ class Parser:
                             street_val = f"{undefined_type[prev_idx]} {street_val}"
                             del undefined_type[prev_idx]
 
-                        defined_type = {"street": f"{pending_prefix} {street_val}".strip()}
+                        defined_type = {
+                            "street": f"{pending_prefix} {street_val}".strip()
+                        }
                         pending_prefix = ""
 
                     result |= defined_type
@@ -67,7 +69,7 @@ class BayanAddress(Immutable):
         "city",
         "province",
         "street",
-        "subdivision"
+        "subdivision",
     ]
     ERROR_MSG = "The address has no such value."
 
