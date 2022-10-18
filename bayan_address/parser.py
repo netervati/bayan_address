@@ -10,10 +10,11 @@ class Parser(Immutable):
     ERROR_MSG = "The address has no such value."
 
     def __init__(self, address: str) -> None:
+        if not is_valid_str(address):
+            raise InvalidValue(address)
+
         self.address = address
         self.parsed_address = {}
-        if not is_valid_str(self.address):
-            raise InvalidValue(self.address)
 
         split_address = self.address.split(",")
         for el in split_address:
