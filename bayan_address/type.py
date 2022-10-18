@@ -25,9 +25,7 @@ def get_province_related_type(val: str) -> Union[str, None]:
 
 
 def is_valid_zipcode(val: str) -> bool:
-    if not val.isdigit():
-        return False
-    if len(val) != 4:
+    if len(val) != 4 or not val.isdigit():
         return False
 
     return True
