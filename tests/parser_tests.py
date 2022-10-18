@@ -1,5 +1,5 @@
 import pytest
-from bayan_address import Parser
+from bayan_address import BayanAddress
 from bayan_address.lib.errors import InvalidValue
 
 
@@ -32,7 +32,7 @@ def monkeypatch_provinces(monkeypatch, provinces_fixture):
     return monkeypatch.setattr(f"{PARSER_PATH}PROVINCES", provinces_fixture)
 
 
-def test_parser_init(
+def test_bayan_address_init(
     mock_getaddresstype,
     mock_isvalidstr,
     monkeypatch_address_format,
@@ -40,13 +40,13 @@ def test_parser_init(
 ):
     with pytest.raises(InvalidValue):
         mock_isvalidstr.return_value = False
-        Parser(1)
+        BayanAddress(1)
 
     arg = "test_value"
     mock_isvalidstr.return_value = True
     mock_getaddresstype.return_value = parsed_address_fixture
 
-    assert Parser(arg).parsed_address == parsed_address_fixture
+    assert BayanAddress(arg).parsed_address == parsed_address_fixture
     mock_isvalidstr.assert_called_with(arg)
     mock_getaddresstype.assert_called_with(arg)
 
@@ -59,7 +59,7 @@ def test_parser_init(
         ("Test Dr., Brgy. Test, Test City, Test Province, 1111", 5),
     ],
 )
-def test_parser_init_split(
+def test_bayan_address_init_split(
     arg,
     count,
     mock_getaddresstype,
@@ -68,13 +68,13 @@ def test_parser_init_split(
 ):
     mock_isvalidstr.return_value = True
     mock_getaddresstype.return_value = {}
-    Parser(arg)
+    BayanAddress(arg)
 
     assert mock_getaddresstype.call_count == count
     mock_isvalidstr.assert_called_with(arg)
 
 
-def test_parser_getprop(
+def test_bayan_address_getprop(
     mock_getaddresstype,
     mock_isvalidstr,
     monkeypatch_address_format,
@@ -84,7 +84,7 @@ def test_parser_getprop(
     data_city = parsed_address_fixture["city"]
     mock_isvalidstr.return_value = True
     mock_getaddresstype.return_value = {"city": data_city}
-    subject = Parser(arg)
+    subject = BayanAddress(arg)
 
     assert subject.getprop("barangay") == PARSER_ERROR_MSG
     assert subject.getprop("city") == data_city
@@ -92,7 +92,7 @@ def test_parser_getprop(
     mock_getaddresstype.assert_called_with(arg)
 
 
-def test_parser_getsprop(
+def test_bayan_address_getsprop(
     mock_getaddresstype,
     mock_getprovincerelatedtype,
     mock_isvalidstr,
@@ -106,7 +106,7 @@ def test_parser_getsprop(
     data_region = "Region A"
     mock_isvalidstr.return_value = True
     mock_getaddresstype.return_value = parsed_address_fixture
-    subject = Parser("Province")
+    subject = BayanAddress("Province")
 
     assert subject.getsprop("key") == PARSER_ERROR_MSG
     assert subject.getsprop(arg_propkey) == data_region
@@ -117,19 +117,19 @@ def test_parser_getsprop(
     parsed_address_fixture["province"] = arg_2
     mock_getprovincerelatedtype.return_value = provinces_fixture["Province"]
 
-    assert Parser(arg_2).getsprop(arg_propkey) == data_region
+    assert BayanAddress(arg_2).getsprop(arg_propkey) == data_region
     mock_isvalidstr.assert_called_with(arg_2)
     mock_getaddresstype.assert_called_with(arg_2)
     mock_getprovincerelatedtype.assert_called_once()
 
     mock_getprovincerelatedtype.return_value = None
     assert (
-        Parser(arg_2).getsprop(arg_propkey)
+        BayanAddress(arg_2).getsprop(arg_propkey)
         == f"The address has no valid province to check it's {arg_propkey}."
     )
 
 
-def test_parser_properties(
+def test_bayan_address_properties(
     address_format_fixture,
     mock_getaddresstype,
     mock_getprovincerelatedtype,
@@ -147,7 +147,7 @@ def test_parser_properties(
     mock_isvalidstr.return_value = True
     mock_getaddresstype.return_value = parsed_address_fixture
     mock_getprovincerelatedtype.return_value = data_province
-    subject_1 = Parser(arg)
+    subject_1 = BayanAddress(arg)
 
     assert subject_1.parsed_address == parsed_address_fixture
     for el in address_format_fixture:

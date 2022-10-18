@@ -4,8 +4,8 @@ The project is still in its early development stage and it's only able to parse 
 
 ## How to Use
 ```python
->>> from bayan_address import Parser
->>> address = Parser("95 JayLee Street, Sofia Subdivision, Del Pilar, San Fernando City, Pampanga, 2000")
+>>> from bayan_address import BayanAddress
+>>> address = BayanAddress("95 JayLee Street, Sofia Subdivision, Del Pilar, San Fernando City, Pampanga, 2000")
 >>> address.parsed_address
 {
   'street': '95 JayLee Street', 

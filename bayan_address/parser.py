@@ -6,7 +6,7 @@ from .lib.utils import is_valid_str
 from .type import get_address_type, get_province_related_type
 
 
-class Parser(Immutable):
+class BayanAddress(Immutable):
     ERROR_MSG = "The address has no such value."
 
     def __init__(self, address: str) -> None:
