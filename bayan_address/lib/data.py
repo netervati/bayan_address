@@ -423,9 +423,13 @@ ADDRESS_FORMAT = MappingProxyType(
         "barangay": ["barangay", "brgy."],
         "building": ["building", "bldg", "floor"],
         "city": ["city"],
-        "drive": ["drive", "dr."],
         "province": [x for x in PROVINCES],
-        "street": ["street", "st."],
+        "street": [
+            "dr.",
+            "drive",
+            "st.",
+            "street",
+        ],
         "subdivision": ["subdivision"],
     }
 )

@@ -19,9 +19,13 @@ def address_format_fixture(provinces_fixture):
         "barangay": ["barangay", "brgy."],
         "building": ["building", "bldg", "floor"],
         "city": ["city"],
-        "drive": ["drive", "dr."],
         "province": [x for x in provinces_fixture],
-        "street": ["street", "st."],
+        "street": [
+            "dr.",
+            "drive",
+            "st.",
+            "street",
+        ],
         "subdivision": ["subdivision"],
     }
 
@@ -33,7 +37,6 @@ def parsed_address_fixture():
         "barangay": "Ville",
         "building": "BLDG. 24A",
         "city": "Sample City",
-        "drive": "Test Dr.",
         "province": "Province",
         "street": "Corner St.",
         "subdivision": "Subdivision Test",
