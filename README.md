@@ -1,4 +1,4 @@
-*bayan_address* is a Python-based address parser for Philippines. It analyzes user-provided address strings and identifies the building units, subdivisions, streets, barangays, cities, provinces, and zip codes. It's also able to identify the island group (Luzon, Visayas, and Mindanao) and region of the address based on its province.
+*BayanAddress* is a Python-based address parser for Philippines. It analyzes user-provided address strings and identifies the building units, subdivisions, streets, barangays, cities, provinces, and zip codes. It's also able to identify the island group (Luzon, Visayas, and Mindanao) and region of the address based on its province.
 
 The project is still in its early development stage and it's only able to parse comma-separated addresses.
 
