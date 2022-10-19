@@ -15,7 +15,7 @@ class Parser:
         self.street = ""
         self.undefined_type = {}
 
-    def run(self):
+    def run(self) -> dict:
         init_strip = strip_matching_data(self.arg)
         result = init_strip["pre_selected_formats"]
         stripped_arg = replace_str(",", init_strip["stripped_address"]).split()
@@ -31,11 +31,7 @@ class Parser:
                     self.set_defined_address(idx)
                     result |= self.defined_type
 
-        remaining_values = ""
-        for _, val in self.undefined_type.items():
-            remaining_values += f" {val.strip()}"
-        remaining_values.strip()
-
+        remaining_values = self.set_remaining_values()
         if is_valid_str(remaining_values):
             l_val = remaining_values
             if "barangay" in result:
@@ -44,7 +40,7 @@ class Parser:
 
         return result
 
-    def set_defined_address(self, idx):
+    def set_defined_address(self, idx: int) -> None:
         self.defined_type = self.address_type
         if "street" in self.address_type:
             prev_idx = idx - 1
@@ -55,8 +51,14 @@ class Parser:
 
             self.defined_type = {"street": concat_str(self.pending_prefix, street_val)}
             self.pending_prefix = ""
+    
+    def set_remaining_values(self) -> str:
+        remaining_str = ""
+        for _, val in self.undefined_type.items():
+            remaining_str += f" {val.strip()}"
+        return remaining_str.strip()
 
-    def set_undefined_address(self, idx):
+    def set_undefined_address(self, idx: int) -> None:
         self.undefined_type[idx] = concat_str(
             self.pending_prefix, self.address_type["undefined"]
         )
