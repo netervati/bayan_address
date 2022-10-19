@@ -50,14 +50,10 @@ class Parser:
             prev_idx = idx - 1
             street_val = self.address_type["street"]
             if prev_idx in self.undefined_type:
-                street_val = concat_str(
-                    self.undefined_type[prev_idx], street_val
-                )
+                street_val = concat_str(self.undefined_type[prev_idx], street_val)
                 del self.undefined_type[prev_idx]
 
-            self.defined_type = {
-                "street": concat_str(self.pending_prefix, street_val)
-            }
+            self.defined_type = {"street": concat_str(self.pending_prefix, street_val)}
             self.pending_prefix = ""
 
     def set_undefined_address(self, idx):
