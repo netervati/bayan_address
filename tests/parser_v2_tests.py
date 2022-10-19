@@ -81,7 +81,7 @@ def monkeypatch_provinces(monkeypatch, provinces_fixture):
             False,
             {},
         ),
-    ]
+    ],
 )
 def test_parser_run(
     arg,
@@ -89,12 +89,12 @@ def test_parser_run(
     concatstr_sideeffect,
     getaddresstype,
     isvalidstr,
-    mock_cleanstr, 
-    mock_concatstr, 
-    mock_getaddresstype, 
-    mock_isvalidstr, 
-    mock_replacestr, 
-    mock_stripmatchingdata, 
+    mock_cleanstr,
+    mock_concatstr,
+    mock_getaddresstype,
+    mock_isvalidstr,
+    mock_replacestr,
+    mock_stripmatchingdata,
     monkeypatch_addressprefix,
     pre_selected_formats,
     replacestr_sideeffect,
