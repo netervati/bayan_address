@@ -51,7 +51,7 @@ class Parser:
 
             self.defined_type = {"street": concat_str(self.pending_prefix, street_val)}
             self.pending_prefix = ""
-    
+
     def set_remaining_values(self) -> str:
         remaining_str = ""
         for _, val in self.undefined_type.items():
