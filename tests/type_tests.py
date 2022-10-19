@@ -165,7 +165,7 @@ def test_is_valid_zipcode(arg, result):
         ),
         (
             "Bayan City",
-            ["bayan city", "province", "bayan city", "bayan city"],
+            ["bayan city", "province", "bayan city", "bayan city", ""],
             ["", "bayan", ""],
             {"pre_selected_formats": {"city": "Bayan City"}, "stripped_address": ""},
         ),

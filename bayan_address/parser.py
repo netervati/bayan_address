@@ -42,15 +42,17 @@ class Parser:
 
     def set_defined_address(self, idx: int) -> None:
         self.defined_type = self.address_type
-        if "street" in self.address_type:
-            prev_idx = idx - 1
-            street_val = self.address_type["street"]
-            if prev_idx in self.undefined_type:
-                street_val = concat_str(self.undefined_type[prev_idx], street_val)
-                del self.undefined_type[prev_idx]
+        f_key = next(iter(self.address_type))
+        if f_key in ["street", "subdivision"]:
+            if f_key in self.address_type:
+                prev_idx = idx - 1
+                f_val = self.address_type[f_key]
+                if prev_idx in self.undefined_type:
+                    f_val = concat_str(self.undefined_type[prev_idx], f_val)
+                    del self.undefined_type[prev_idx]
 
-            self.defined_type = {"street": concat_str(self.pending_prefix, street_val)}
-            self.pending_prefix = ""
+                self.defined_type = {f_key: concat_str(self.pending_prefix, f_val)}
+                self.pending_prefix = ""
 
     def set_remaining_values(self) -> str:
         remaining_str = ""

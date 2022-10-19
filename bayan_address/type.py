@@ -1,5 +1,5 @@
 from typing import Union
-from .lib.data import ADDRESS_FORMAT, CITIES, PROVINCES
+from .lib.data import ADDRESS_FORMAT, ADDRESS_PREFIX, CITIES, PROVINCES
 from .lib.utils import clean_str, replace_str
 
 
@@ -57,18 +57,32 @@ def strip_matching_data(val: str) -> dict:
             break
 
     cleaned_str = clean_str(stripped_address)
+    split_address_prefix = ADDRESS_PREFIX.split()
     for el in CITIES:
         cleaned_element = clean_str(el)
-        if cleaned_element in cleaned_str:
-            stripped_address = replace_str(el, stripped_address)
-            pre_selected_formats["city"] = el
-            break
-        elif "city" in cleaned_element:
-            cleaned_element = replace_str("city", cleaned_element).strip()
-            if cleaned_element in cleaned_str:
-                stripped_address = replace_str(cleaned_element, stripped_address)
-                pre_selected_formats["city"] = cleaned_element.capitalize()
+        skip_with_prefix = False
+
+        for pref in split_address_prefix:
+            prefixed_str = f"{pref} {cleaned_element.strip()}"
+            if prefixed_str in cleaned_str:
+                skip_with_prefix = True
                 break
+
+        if not skip_with_prefix:
+            if cleaned_element in cleaned_str:
+                stripped_address = replace_str(el, stripped_address)
+                city_value = el
+                if "city" in clean_str(stripped_address):
+                    stripped_address = replace_str("city", stripped_address)
+                    city_value += " City"
+                pre_selected_formats["city"] = city_value
+                break
+            elif "city" in cleaned_element:
+                cleaned_element = replace_str("city", cleaned_element).strip()
+                if cleaned_element in cleaned_str:
+                    stripped_address = replace_str(cleaned_element, stripped_address)
+                    pre_selected_formats["city"] = cleaned_element.capitalize()
+                    break
 
     return {
         "pre_selected_formats": pre_selected_formats,

@@ -1,7 +1,7 @@
 from types import MappingProxyType
 
 
-ADDRESS_PREFIX = "de santa santo sta sta. sto sto."
+ADDRESS_PREFIX = "de del dela delos la las los santa santo sta sta. sto sto."
 
 
 CITIES = [
