@@ -1,7 +1,6 @@
 from typing import Union
-import re
 from .lib.data_v2 import ADDRESS_FORMAT, CITIES, PROVINCES
-from .lib.utils import clean_str
+from .lib.utils import clean_str, replace_str
 
 
 def get_address_type(item: str) -> dict:
@@ -42,43 +41,34 @@ def is_valid_zipcode(val: str) -> bool:
     return True
 
 
-def strip_matching_data(val: str) -> bool:
+def strip_matching_data(val: str) -> dict:
     pre_selected_formats = {}
     stripped_address = val
+
     cleaned_str = clean_str(val)
     if "metro manila" in cleaned_str:
-        stripped_address = re.sub(
-            "metro manila", "", stripped_address, flags=re.IGNORECASE
-        )
+        stripped_address = replace_str("metro manila", stripped_address)
         pre_selected_formats["administrative_region"] = "Metro Manila"
 
     for el in PROVINCES:
         if clean_str(el) in cleaned_str:
-            stripped_address = re.sub(
-                re.escape(el), "", stripped_address, flags=re.IGNORECASE
-            )
+            stripped_address = replace_str(el, stripped_address)
             pre_selected_formats["province"] = el
+            break
 
     cleaned_str = clean_str(stripped_address)
     for el in CITIES:
         cleaned_element = clean_str(el)
         if cleaned_element in cleaned_str:
-            stripped_address = re.sub(
-                re.escape(el), "", stripped_address, flags=re.IGNORECASE
-            )
+            stripped_address = replace_str(el, stripped_address)
             pre_selected_formats["city"] = el
+            break
         elif "city" in cleaned_element:
-            cleaned_element = re.sub(
-                re.escape("city"), "", cleaned_element, flags=re.IGNORECASE
-            ).strip()
+            cleaned_element = replace_str("city", cleaned_element).strip()
             if cleaned_element in cleaned_str:
-                stripped_address = re.sub(
-                    re.escape(cleaned_element),
-                    "",
-                    stripped_address,
-                    flags=re.IGNORECASE,
-                )
-                pre_selected_formats["city"] = cleaned_element
+                stripped_address = replace_str(cleaned_element, stripped_address)
+                pre_selected_formats["city"] = cleaned_element.capitalize()
+                break
 
     return {
         "pre_selected_formats": pre_selected_formats,

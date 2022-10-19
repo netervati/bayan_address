@@ -1,64 +1,70 @@
 from functools import lru_cache
-import re
 from .lib.config import Immutable
 from .lib.data_v2 import ADDRESS_PREFIX, PROVINCES
 from .lib.errors import InvalidValue
-from .lib.utils import clean_str, is_valid_str
+from .lib.utils import clean_str, concat_str, is_valid_str, replace_str
 from .type_v2 import get_address_type, get_province_related_type, strip_matching_data
 
 
 class Parser:
     def __init__(self, arg: str) -> None:
+        self.address_type = {}
         self.arg = arg
+        self.defined_type = {}
+        self.pending_prefix = ""
         self.street = ""
+        self.undefined_type = {}
 
     def run(self):
         init_strip = strip_matching_data(self.arg)
         result = init_strip["pre_selected_formats"]
-
-        stripped_arg = re.sub(",", "", init_strip["stripped_address"]).split()
-        undefined_type = {}
-        pending_prefix = ""
+        stripped_arg = replace_str(",", init_strip["stripped_address"]).split()
 
         for idx, el in enumerate(stripped_arg):
             if clean_str(el) in ADDRESS_PREFIX:
-                pending_prefix = el
+                self.pending_prefix = el
             else:
-                address_type = get_address_type(el)
-
-                if "undefined" in address_type:
-                    undefined_type[
-                        idx
-                    ] = f"{pending_prefix.strip()} {address_type['undefined']}".strip()
-                    pending_prefix = ""
+                self.address_type = get_address_type(el)
+                if "undefined" in self.address_type:
+                    self.set_undefined_address(idx)
                 else:
-                    defined_type = address_type
-                    if "street" in address_type:
-                        prev_idx = idx - 1
-                        street_val = address_type["street"]
-                        if prev_idx in undefined_type:
-                            street_val = f"{undefined_type[prev_idx]} {street_val}"
-                            del undefined_type[prev_idx]
-
-                        defined_type = {
-                            "street": f"{pending_prefix} {street_val}".strip()
-                        }
-                        pending_prefix = ""
-
-                    result |= defined_type
+                    self.set_defined_address(idx)
+                    result |= self.defined_type
 
         remaining_values = ""
-        for _, val in undefined_type.items():
+        for _, val in self.undefined_type.items():
             remaining_values += f" {val.strip()}"
         remaining_values.strip()
 
         if is_valid_str(remaining_values):
             l_val = remaining_values
             if "barangay" in result:
-                l_val = f"{result['barangay'].strip()} {l_val.strip()}"
+                l_val = concat_str(result["barangay"], l_val)
             result["barangay"] = l_val.strip()
 
         return result
+
+    def set_defined_address(self, idx):
+        self.defined_type = self.address_type
+        if "street" in self.address_type:
+            prev_idx = idx - 1
+            street_val = self.address_type["street"]
+            if prev_idx in self.undefined_type:
+                street_val = concat_str(
+                    self.undefined_type[prev_idx], street_val
+                )
+                del self.undefined_type[prev_idx]
+
+            self.defined_type = {
+                "street": concat_str(self.pending_prefix, street_val)
+            }
+            self.pending_prefix = ""
+
+    def set_undefined_address(self, idx):
+        self.undefined_type[idx] = concat_str(
+            self.pending_prefix, self.address_type["undefined"]
+        )
+        self.pending_prefix = ""
 
 
 class BayanAddress(Immutable):
