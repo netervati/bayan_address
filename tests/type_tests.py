@@ -2,8 +2,6 @@ import pytest
 from bayan_address.type import (
     get_address_type,
     get_province_related_type,
-    is_building_no,
-    is_valid_zipcode,
     strip_matching_data,
 )
 
@@ -14,16 +12,6 @@ TYPE_PATH = "bayan_address.type."
 @pytest.fixture
 def mock_cleanstr(mocker):
     return mocker.patch(f"{TYPE_PATH}clean_str")
-
-
-@pytest.fixture
-def mock_isbuildingno(mocker):
-    return mocker.patch(f"{TYPE_PATH}is_building_no")
-
-
-@pytest.fixture
-def mock_isvalidzipcode(mocker):
-    return mocker.patch(f"{TYPE_PATH}is_valid_zipcode")
 
 
 @pytest.fixture
@@ -119,30 +107,6 @@ def test_get_province_related_type(
     result = provinces_fixture[arg] if is_successful else None
 
     assert get_province_related_type(arg) == result
-
-
-@pytest.mark.parametrize(
-    ["arg", "result"],
-    [
-        ("", False),
-        ("10", True),
-        ("1000", False),
-    ],
-)
-def test_is_building_no(arg, result):
-    assert is_building_no(arg) == result
-
-
-@pytest.mark.parametrize(
-    ["arg", "result"],
-    [
-        ("", False),
-        ("10", False),
-        ("1000", True),
-    ],
-)
-def test_is_valid_zipcode(arg, result):
-    assert is_valid_zipcode(arg) == result
 
 
 # @pytest.mark.parametrize(
