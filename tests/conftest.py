@@ -2,6 +2,16 @@ import pytest
 
 
 @pytest.fixture
+def address_prefix_fixture():
+    return ["De"]
+
+
+@pytest.fixture
+def cities_fixture():
+    return ["Bayan City"]
+
+
+@pytest.fixture
 def provinces_fixture():
     return {
         "Province": {

@@ -1,12 +1,82 @@
 from functools import lru_cache
 from .lib.config import Immutable
-from .lib.data import ADDRESS_FORMAT, PROVINCES
+from .lib.data import ADDRESS_PREFIX, PROVINCES
 from .lib.errors import InvalidValue
-from .lib.utils import is_valid_str
-from .type import get_address_type, get_province_related_type
+from .lib.utils import clean_str, concat_str, is_valid_str, replace_str
+from .type import get_address_type, get_province_related_type, strip_matching_data
+
+
+class Parser:
+    def __init__(self, arg: str) -> None:
+        self.address_type = {}
+        self.arg = arg
+        self.defined_type = {}
+        self.pending_prefix = ""
+        self.street = ""
+        self.undefined_type = {}
+
+    def run(self) -> dict:
+        init_strip = strip_matching_data(self.arg)
+        result = init_strip["pre_selected_formats"]
+        stripped_arg = replace_str(",", init_strip["stripped_address"]).split()
+
+        for idx, el in enumerate(stripped_arg):
+            if clean_str(el) in ADDRESS_PREFIX:
+                self.pending_prefix = el
+            else:
+                self.address_type = get_address_type(el)
+                if "undefined" in self.address_type:
+                    self.set_undefined_address(idx)
+                else:
+                    self.set_defined_address(idx)
+                    result |= self.defined_type
+
+        remaining_values = self.set_remaining_values()
+        if is_valid_str(remaining_values):
+            l_val = remaining_values
+            if "barangay" in result:
+                l_val = concat_str(result["barangay"], l_val)
+            result["barangay"] = l_val.strip()
+
+        return result
+
+    def set_defined_address(self, idx: int) -> None:
+        self.defined_type = self.address_type
+        f_key = next(iter(self.address_type))
+        if f_key in ["street", "subdivision"]:
+            if f_key in self.address_type:
+                prev_idx = idx - 1
+                f_val = self.address_type[f_key]
+                if prev_idx in self.undefined_type:
+                    f_val = concat_str(self.undefined_type[prev_idx], f_val)
+                    del self.undefined_type[prev_idx]
+
+                self.defined_type = {f_key: concat_str(self.pending_prefix, f_val)}
+                self.pending_prefix = ""
+
+    def set_remaining_values(self) -> str:
+        remaining_str = ""
+        for _, val in self.undefined_type.items():
+            remaining_str += f" {val.strip()}"
+        return remaining_str.strip()
+
+    def set_undefined_address(self, idx: int) -> None:
+        self.undefined_type[idx] = concat_str(
+            self.pending_prefix, self.address_type["undefined"]
+        )
+        self.pending_prefix = ""
 
 
 class BayanAddress(Immutable):
+    ADDRESS_TYPES = [
+        "administrative_region",
+        "barangay",
+        "building",
+        "city",
+        "province",
+        "street",
+        "subdivision",
+    ]
     ERROR_MSG = "The address has no such value."
 
     def __init__(self, address: str) -> None:
@@ -14,14 +84,9 @@ class BayanAddress(Immutable):
             raise InvalidValue(address)
 
         self.address = address
-        self.parsed_address = {}
+        self.parsed_address = Parser(address).run()
 
-        split_address = self.address.split(",")
-        for el in split_address:
-            if result := get_address_type(el):
-                self.parsed_address |= result
-
-        for el in ADDRESS_FORMAT:
+        for el in self.ADDRESS_TYPES:
             setattr(self, el, self.getprop(el))
 
         super().__init__()
