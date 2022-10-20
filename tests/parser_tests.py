@@ -57,61 +57,61 @@ def monkeypatch_provinces(monkeypatch, provinces_fixture):
     return monkeypatch.setattr(f"{PARSER_PATH}PROVINCES", provinces_fixture)
 
 
-@pytest.mark.parametrize(
-    [
-        "arg",
-        "pre_selected_formats",
-        "stripped_address",
-        "replacestr_sideeffect",
-        "cleanstr_sideeffect",
-        "getaddresstype",
-        "concatstr_sideeffect",
-        "isvalidstr",
-        "result",
-    ],
-    [
-        (
-            "",
-            {},
-            "",
-            [""],
-            ["de"],
-            {"undefined": ""},
-            [""],
-            False,
-            {},
-        ),
-    ],
-)
-def test_parser_run(
-    arg,
-    cleanstr_sideeffect,
-    concatstr_sideeffect,
-    getaddresstype,
-    isvalidstr,
-    mock_cleanstr,
-    mock_concatstr,
-    mock_getaddresstype,
-    mock_isvalidstr,
-    mock_replacestr,
-    mock_stripmatchingdata,
-    monkeypatch_addressprefix,
-    pre_selected_formats,
-    replacestr_sideeffect,
-    result,
-    stripped_address,
-):
-    mock_stripmatchingdata.return_value = {
-        "pre_selected_formats": pre_selected_formats,
-        "stripped_address": stripped_address,
-    }
-    mock_replacestr.side_effect = replacestr_sideeffect
-    mock_cleanstr.side_effect = cleanstr_sideeffect
-    mock_getaddresstype.return_value = getaddresstype
-    mock_concatstr.side_effect = concatstr_sideeffect
-    mock_isvalidstr.return_value = isvalidstr
+# @pytest.mark.parametrize(
+#     [
+#         "arg",
+#         "pre_selected_formats",
+#         "stripped_address",
+#         "replacestr_sideeffect",
+#         "cleanstr_sideeffect",
+#         "getaddresstype",
+#         "concatstr_sideeffect",
+#         "isvalidstr",
+#         "result",
+#     ],
+#     [
+#         (
+#             "",
+#             {},
+#             "",
+#             [""],
+#             ["de"],
+#             {"undefined": ""},
+#             [""],
+#             False,
+#             {},
+#         ),
+#     ],
+# )
+# def test_parser_run(
+#     arg,
+#     cleanstr_sideeffect,
+#     concatstr_sideeffect,
+#     getaddresstype,
+#     isvalidstr,
+#     mock_cleanstr,
+#     mock_concatstr,
+#     mock_getaddresstype,
+#     mock_isvalidstr,
+#     mock_replacestr,
+#     mock_stripmatchingdata,
+#     monkeypatch_addressprefix,
+#     pre_selected_formats,
+#     replacestr_sideeffect,
+#     result,
+#     stripped_address,
+# ):
+#     mock_stripmatchingdata.return_value = {
+#         "pre_selected_formats": pre_selected_formats,
+#         "stripped_address": stripped_address,
+#     }
+#     mock_replacestr.side_effect = replacestr_sideeffect
+#     mock_cleanstr.side_effect = cleanstr_sideeffect
+#     mock_getaddresstype.return_value = getaddresstype
+#     mock_concatstr.side_effect = concatstr_sideeffect
+#     mock_isvalidstr.return_value = isvalidstr
 
-    assert Parser(arg).run() == result
+#     assert Parser(arg).run() == result
 
 
 def test_bayan_address_init(
