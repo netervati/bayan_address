@@ -1,7 +1,7 @@
 from types import MappingProxyType
 
 
-ADDRESS_PREFIX = "de del dela delos la las los santa santo sta sta. sto sto."
+ADDRESS_PREFIX = " de del dela delos la las los santa santo sta sta. sto sto. "
 
 
 CITIES = [
@@ -1433,13 +1433,14 @@ PROVINCES = MappingProxyType(
 
 ADDRESS_FORMAT = MappingProxyType(
     {
-        "administrative_region": ["metro manila"],
-        "barangay": ["barangay", "brgy."],
-        "building": ["building", "bldg", "floor"],
+        "barangay": ["barangay", "brgy.", "brgy"],
+        "building": ["building", "bldg.", "bldg", "floor"],
         "street": [
             "dr.",
+            "dr",
             "drive",
             "st.",
+            "st",
             "street",
         ],
         "subdivision": ["subdivision"],
