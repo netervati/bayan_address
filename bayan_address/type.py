@@ -5,14 +5,13 @@ from .lib.utils import clean_str, match_pattern, replace_str
 
 def get_address_type(item: str) -> dict:
     stripped_item = item.strip()
-    if is_building_no(stripped_item):
+
+    if item.isdigit():
         return {"building": stripped_item}
 
-    cleaned_address = clean_str(item)
     for k, v in ADDRESS_FORMAT.items():
         for el in v:
-            cleaned_element = clean_str(el)
-            if match_pattern(cleaned_element, cleaned_address):
+            if match_pattern(el, item):
                 return {k: stripped_item}
 
     return {"undefined": stripped_item}
@@ -23,20 +22,6 @@ def get_province_related_type(val: str) -> Union[str, None]:
     for el in PROVINCES:
         if clean_str(el) in cleaned_str:
             return PROVINCES[el]
-
-
-def is_building_no(val: str) -> bool:
-    if len(val) == 4 or not val.isdigit():
-        return False
-
-    return True
-
-
-def is_valid_zipcode(val: str) -> bool:
-    if len(val) != 4 or not val.isdigit():
-        return False
-
-    return True
 
 
 def strip_matching_data(val: str) -> dict:
