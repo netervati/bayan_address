@@ -16,5 +16,17 @@ def is_valid_str(val: str) -> bool:
     return True
 
 
+def match_pattern(arg1: str, arg2: str):
+    pattern = re.compile(arg1, re.IGNORECASE)
+    result = pattern.findall(arg2)
+
+    if len(result) > 0:
+        return (result[0], replace_str(result[0], arg2))
+
+
 def replace_str(substring: str, string: str) -> str:
     return re.sub(re.escape(substring), "", string, flags=re.IGNORECASE)
+
+
+def trim_str(str: str) -> str:
+    return " ".join(str.split())
