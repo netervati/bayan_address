@@ -1446,3 +1446,13 @@ ADDRESS_FORMAT = MappingProxyType(
         "subdivision": ["subdivision"],
     }
 )
+
+
+STREET_FORMAT = [
+    "dr.",
+    "dr",
+    "drive",
+    "st.",
+    "st",
+    "street",
+]

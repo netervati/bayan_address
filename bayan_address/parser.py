@@ -1,9 +1,15 @@
 from functools import lru_cache
 from .lib.config import Immutable
-from .lib.data import ADDRESS_PREFIX, PROVINCES
+from .lib.data import ADDRESS_PREFIX, PROVINCES, STREET_FORMAT
 from .lib.errors import InvalidValue
-from .lib.utils import clean_str, concat_str, is_valid_str, replace_str, trim_str
-from .type import get_address_type, get_province_related_type, strip_matching_data
+from .lib.utils import (
+    is_valid_str,
+    match_in_between_pattern,
+    match_pattern,
+    replace_str,
+    trim_str,
+)
+from .type import get_province_related_type, strip_matching_data
 
 
 class Parser:
@@ -17,54 +23,36 @@ class Parser:
 
     def run(self) -> dict:
         matched = strip_matching_data(self.arg)
-        prefixes = ADDRESS_PREFIX.split()
+        prefixes = ADDRESS_PREFIX.split() + [""]
         result = matched["pre_selected_formats"]
-        stripped_arg = replace_str(",", matched["stripped_address"]).split()
+        stripped_address = matched["stripped_address"]
 
-        for idx, el in enumerate(stripped_arg):
-            if clean_str(el) in prefixes:
-                self.pending_prefix = el
-            else:
-                self.address_type = get_address_type(el)
-                if "undefined" in self.address_type:
-                    self.set_undefined_address(idx)
-                else:
-                    self.set_defined_address(idx)
-                    result |= self.defined_type
+        for pref in prefixes:
+            for x in STREET_FORMAT:
+                if res := match_in_between_pattern(
+                    r"\b{}(.*?){}+\b".format(pref, x),
+                    stripped_address,
+                    before=pref,
+                    after=x,
+                ):
+                    if resb := match_pattern(r"\b\d+\b", res[0]):
+                        result["street"] = resb[0]
+                        result["building"] = resb[0]
+                        stripped_address = res[1]
+                        break
+                    result["street"] = res[0]
+                    stripped_address = res[1]
+                    break
 
-        remaining_values = self.set_remaining_values()
-        if is_valid_str(remaining_values):
-            l_val = remaining_values
-            if "barangay" in result:
-                l_val = concat_str(result["barangay"], l_val)
-            result["barangay"] = l_val.strip()
+            if "street" in result:
+                break
+
+        stripped_address = replace_str(",", stripped_address).strip()
+
+        if is_valid_str(stripped_address):
+            result["barangay"] = stripped_address.strip()
 
         return result
-
-    def set_defined_address(self, idx: int) -> None:
-        self.defined_type = self.address_type
-        f_key = next(iter(self.address_type))
-        if f_key in ["street", "subdivision"]:
-            prev_idx = idx - 1
-            f_val = self.address_type[f_key]
-            if prev_idx in self.undefined_type:
-                f_val = concat_str(self.undefined_type[prev_idx], f_val)
-                del self.undefined_type[prev_idx]
-
-            self.defined_type = {f_key: concat_str(self.pending_prefix, f_val)}
-            self.pending_prefix = ""
-
-    def set_remaining_values(self) -> str:
-        remaining_str = ""
-        for _, val in self.undefined_type.items():
-            remaining_str += f" {val.strip()}"
-        return remaining_str.strip()
-
-    def set_undefined_address(self, idx: int) -> None:
-        self.undefined_type[idx] = concat_str(
-            self.pending_prefix, self.address_type["undefined"]
-        )
-        self.pending_prefix = ""
 
 
 class BayanAddress(Immutable):
