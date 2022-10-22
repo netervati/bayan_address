@@ -25,20 +25,8 @@ def match_address_type(val: str) -> dict:
                 stripped = res[1]
                 break
 
-    cleaned_str = clean_str(stripped)
-    prefixes = ADDRESS_PREFIX.split()
-
     for el in CITIES:
         cleaned_element = clean_str(el)
-        skip = False
-
-        for v in prefixes:
-            if f"{v} {cleaned_element.strip()}" in cleaned_str:
-                skip = True
-                break
-
-        if skip is True:
-            continue
 
         # Ensures that if city with no "City" in name will match
         # with address that has City (e.g. Quezon == Quezon City)
@@ -66,7 +54,7 @@ def match_address_type(val: str) -> dict:
         if "city" in address:
             break
 
-    prefixes += [""]
+    prefixes = ADDRESS_PREFIX.split() + [""]
     for pref in prefixes:
         for x in STREET_FORMAT:
             if res := match_in_between_pattern(
