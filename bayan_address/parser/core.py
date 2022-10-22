@@ -1,8 +1,8 @@
 from functools import lru_cache
 from bayan_address.parser.matchers import match_address_type
-from bayan_address.lib.config import Immutable
 from bayan_address.lib.data import PROVINCES
 from bayan_address.lib.errors import InvalidValue
+from bayan_address.lib.helpers import Immutable
 from bayan_address.lib.utils import is_valid_str
 from bayan_address.type import get_province_related_type
 
