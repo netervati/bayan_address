@@ -73,7 +73,7 @@ def match_address_type(val: str) -> dict:
                 r"\b{}(.*?){}+\b".format(pref, x),
                 stripped,
                 before=pref,
-                after=x,
+                after=x.capitalize(),
             ):
                 if resb := match_pattern(r"\b\d+\b", res[0]):
                     address["street"] = resb[1]
