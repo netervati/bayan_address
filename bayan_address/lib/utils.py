@@ -10,15 +10,12 @@ def concat_str(arg1: str, arg2: str) -> str:
 
 
 def is_valid_str(val: str) -> bool:
-    if not isinstance(val, str) or val.strip() == "":
-        return False
-
-    return True
+    return isinstance(val, str) and val.strip() != ""
 
 
 def match_in_between_pattern(*args, **kwargs):
     if result := re.search(args[0], args[1], re.IGNORECASE):
-        substr = f"{kwargs['before'].capitalize()}{result.group(1)}{kwargs['after']}"
+        substr = f"{kwargs['before'].capitalize()}{result.group(1)}{kwargs['after'].capitalize()}"
         return (substr, replace_str(substr, args[1]))
 
 
