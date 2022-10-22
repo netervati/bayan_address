@@ -1,10 +1,17 @@
 from functools import lru_cache
+from typing import Union
 from bayan_address.parser.matchers import match_address_type
 from bayan_address.lib.data import PROVINCES
 from bayan_address.lib.errors import InvalidValue
 from bayan_address.lib.helpers import Immutable
-from bayan_address.lib.utils import is_valid_str
-from bayan_address.type import get_province_related_type
+from bayan_address.lib.utils import clean_str, is_valid_str
+
+
+def get_province_related_type(val: str) -> Union[str, None]:
+    cleaned_str = clean_str(val)
+    for el in PROVINCES:
+        if clean_str(el) in cleaned_str:
+            return PROVINCES[el]
 
 
 class BayanAddress(Immutable):
