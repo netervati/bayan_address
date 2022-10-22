@@ -1449,10 +1449,10 @@ ADDRESS_FORMAT = MappingProxyType(
 
 
 STREET_FORMAT = [
+    "drive",
     "dr.",
     "dr",
-    "drive",
+    "street",
     "st.",
     "st",
-    "street",
 ]
