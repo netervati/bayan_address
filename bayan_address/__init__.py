@@ -1,1 +1,1 @@
-from bayan_address.parser import BayanAddress
+from bayan_address.main import parse
