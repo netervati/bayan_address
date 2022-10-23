@@ -1,5 +1,5 @@
 import pytest
-from bayan_address.lib.config import Immutable
+from bayan_address.lib.helpers import Immutable
 
 
 class ImmutableTesterClass(Immutable):
