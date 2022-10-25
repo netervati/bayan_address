@@ -1431,24 +1431,10 @@ PROVINCES = MappingProxyType(
 )
 
 
-ADDRESS_FORMAT = MappingProxyType(
-    {
-        "barangay": ["barangay", "brgy.", "brgy"],
-        "building": ["building", "bldg.", "bldg", "floor"],
-        "street": [
-            "dr.",
-            "dr",
-            "drive",
-            "st.",
-            "st",
-            "street",
-        ],
-        "subdivision": ["subdivision"],
-    }
-)
-
-
 STREET_FORMAT = [
+    "avenue",
+    "ave.",
+    "ave",
     "drive",
     "dr.",
     "dr",
