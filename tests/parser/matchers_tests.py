@@ -257,42 +257,57 @@ def test_match_city(
 
 
 @pytest.mark.parametrize(
-    ["arg", "matchpattern"],
+    ["arg", "matchpattern", "ismatched"],
     [
         (
             "Faraway",
             [
+                None,
+                None,
                 ("Faraway", ""),
             ],
+            True,
         ),
         (
             "La Paz",
             [
                 None,
+                None,
+                None,
+                None,
+                None,
                 ("La Paz", ""),
             ],
+            True,
+        ),
+        (
+            "Faraway city",
+            [
+                ("Faraway city", ""),
+            ],
+            False,
         ),
         (
             "tryst",
             [
                 None,
                 None,
+                None,
+                None,
+                None,
+                None,
             ],
+            False,
         ),
     ],
 )
 def test_match_province(
-    arg, matchpattern, mock_matchpattern, monkeypatch, provinces_fixture
+    arg, ismatched, matchpattern, mock_matchpattern, monkeypatch, provinces_fixture
 ):
     monkeypatch.setattr(f"{MOCK_PATH}PROVINCES", provinces_fixture)
     mock_matchpattern.side_effect = matchpattern
 
-    matched = list(filter(lambda x: x != None, matchpattern))
-    if not matched:
-        result = None
-    else:
-        key = matched[0][0]
-        result = ("", {"province": key} | provinces_fixture[key])
+    result = None if not ismatched else ("", {"province": arg} | provinces_fixture[arg])
 
     assert match_province(arg) == result
     assert mock_matchpattern.call_count == len(matchpattern)
