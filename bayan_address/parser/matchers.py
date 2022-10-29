@@ -82,8 +82,8 @@ def match_city(arg: str) -> Union[dict, None]:
 
 
 def match_province(arg: str) -> Union[dict, None]:
-    is_city = lambda city, arg: (
-        match_pattern(f"{city} city", arg) or match_pattern(f"city of {city}", arg)
+    is_city = lambda prov, arg: (
+        match_pattern(f"{prov} city", arg) or match_pattern(f"city of {prov}", arg)
     )
 
     for el in PROVINCES:
