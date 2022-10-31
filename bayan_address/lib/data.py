@@ -1,10 +1,10 @@
 from types import MappingProxyType
 
 
-ADDRESS_PREFIX = " de del dela delos la las los santa santo sta sta. sto sto. "
+ADDRESS_PREFIX: str = " de del dela delos la las los santa santo sta sta. sto sto. "
 
 
-CITIES = [
+CITIES: list[str] = [
     "Aborlan",
     "Abra de Ilog",
     "Abucay",
@@ -1431,7 +1431,7 @@ PROVINCES = MappingProxyType(
 )
 
 
-STREET_FORMAT = [
+STREET_FORMAT: list[str] = [
     "avenue",
     "ave.",
     "ave",
