@@ -1,10 +1,17 @@
+from pathlib import Path
 from setuptools import setup
+
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 
 setup(
     name="bayan_address",
-    version="0.1.1",
+    version="0.2.1",
     description="A Python-based address parser for Philippines",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     url="https://github.com/netervati/bayan_address",
     author="Christopher Tabula",
     author_email="netervati@gmail.com",
