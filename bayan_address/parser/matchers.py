@@ -34,17 +34,17 @@ def match_address_type(val: str) -> dict:
 # ==================================
 
 
-def match_administrative_region(arg: str) -> Union[dict, None]:
+def match_administrative_region(arg: str) -> Union[tuple[str, dict], None]:
     if res := match_pattern("metro manila", arg):
         return (res[1], {"administrative_region": res[0]})
 
 
-def match_barangay(arg: str) -> Union[dict, None]:
+def match_barangay(arg: str) -> Union[tuple[str, dict], None]:
     if is_valid_str(arg):
         return ("", {"barangay": arg.strip()})
 
 
-def match_city(arg: str) -> Union[dict, None]:
+def match_city(arg: str) -> Union[tuple[str, dict], None]:
     address_city = None
     stripped = arg
 
@@ -81,7 +81,7 @@ def match_city(arg: str) -> Union[dict, None]:
         return (stripped, {"city": address_city})
 
 
-def match_province(arg: str) -> Union[dict, None]:
+def match_province(arg: str) -> Union[tuple[str, dict], None]:
     is_city = lambda prov, arg: (
         match_pattern(f"{prov} city", arg) or match_pattern(f"city of {prov}", arg)
     )
@@ -94,7 +94,7 @@ def match_province(arg: str) -> Union[dict, None]:
             return (res[1], province_dict)
 
 
-def match_street(arg: str) -> Union[dict, None]:
+def match_street(arg: str) -> Union[tuple[str, dict], None]:
     address_building = None
     address_street = None
     stripped = arg
@@ -128,13 +128,13 @@ def match_street(arg: str) -> Union[dict, None]:
         return (stripped, address_dict)
 
 
-def match_subdivision(arg: str) -> Union[dict, None]:
+def match_subdivision(arg: str) -> Union[tuple[str, dict], None]:
     if res := match_in_between_pattern(
         r"(.*?)subdivision+\b", arg, before="", after="Subdivision"
     ):
         return (res[1], {"subdivision": res[0]})
 
 
-def match_zip_code(arg: str) -> Union[dict, None]:
+def match_zip_code(arg: str) -> Union[tuple[str, dict], None]:
     if res := match_pattern(r"\d{4}", arg):
         return (res[1], {"zip_code": res[0]})
