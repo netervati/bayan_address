@@ -99,8 +99,7 @@ def match_street(arg: str) -> Union[tuple[str, dict], None]:
     address_street = None
     stripped = arg
 
-    prefixes = ADDRESS_PREFIX.split() + [""]
-    for pref in prefixes:
+    for pref in ADDRESS_PREFIX:
         for x in STREET_FORMAT:
             if res := match_in_between_pattern(
                 r"\b{}(.*?){}+\b".format(pref, x),

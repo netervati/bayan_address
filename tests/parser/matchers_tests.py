@@ -16,7 +16,7 @@ MOCK_PATH = "bayan_address.parser.matchers."
 
 @pytest.fixture
 def address_fixture():
-    return " de la "
+    return ["", "de", "la"]
 
 
 @pytest.fixture
@@ -347,9 +347,11 @@ def test_match_street(
     matchpattern,
     mock_matchinbetweenpattern,
     mock_matchpattern,
+    monkeypatch,
     result,
     street_format_fixture,
 ):
+    monkeypatch.setattr(f"{MOCK_PATH}ADDRESS_PREFIX", address_fixture)
     mock_matchinbetweenpattern.side_effect = matchinbetweenpattern
     mock_matchpattern.side_effect = matchpattern
 
