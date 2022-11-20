@@ -1,4 +1,4 @@
-from typing import Union
+from bayan_address.lib._typings import ParsedAddressType
 from bayan_address.lib.data import ADDRESS_PREFIX, CITIES, PROVINCES, STREET_FORMAT
 from bayan_address.lib.utils import (
     clean_str,
@@ -34,45 +34,50 @@ def match_address_type(val: str) -> dict:
 # ==================================
 
 
-def match_administrative_region(arg: str) -> Union[tuple[str, dict], None]:
+def match_administrative_region(arg: str) -> ParsedAddressType:
     if res := match_pattern("metro manila", arg):
         return (res[1], {"administrative_region": res[0]})
 
 
-def match_barangay(arg: str) -> Union[tuple[str, dict], None]:
+def match_barangay(arg: str) -> ParsedAddressType:
     if is_valid_str(arg):
         return ("", {"barangay": arg.strip()})
 
 
-def match_city(arg: str) -> Union[tuple[str, dict], None]:
+def match_city(arg: str) -> ParsedAddressType:
     address_city = None
     stripped = arg
 
-    for el in CITIES:
-        cleaned_element = clean_str(el)
-
+    def city_patterns(el, stripped):
         # Ensures that if city with no "City" in name will match
         # with address that has City (e.g. Quezon == Quezon City)
         if res := match_pattern(f"{el} city", stripped):
-            address_city = res[0]
-            stripped = res[1]
-        elif res := match_pattern(el, stripped):
+            return res
+
+        # Ensures that the value that matches the city is the actual
+        # city in the address string and not a different address
+        # type (e.g. parser should not treat San Jose in
+        # San Jose Zamboanga City as city)
+        if res := match_pattern(el, stripped):
             if "city" in clean_str(res[1]):
                 if res_b := match_pattern(f"{el} city", stripped):
-                    address_city = res_b[0]
-                    stripped = res_b[1]
+                    return res_b
                 else:
-                    continue
+                    return
             else:
-                address_city = res[0]
-                stripped = res[1]
+                return res
+
         # Ensures that if city with "City" in name will match
         # with address that has no City (e.g. Quezon City == Quezon)
-        elif "city" in cleaned_element:
-            cleaned_element = replace_str("city", cleaned_element).strip()
+        if "city" in clean_str(el):
+            cleaned_element = replace_str("city", clean_str(el)).strip()
             if res := match_pattern(cleaned_element, stripped):
-                address_city = res[0]
-                stripped = res[1]
+                return res
+
+    for el in CITIES:
+        if res := city_patterns(el, stripped):
+            address_city = res[0]
+            stripped = res[1]
 
         if address_city:
             break
@@ -81,7 +86,7 @@ def match_city(arg: str) -> Union[tuple[str, dict], None]:
         return (stripped, {"city": address_city})
 
 
-def match_province(arg: str) -> Union[tuple[str, dict], None]:
+def match_province(arg: str) -> ParsedAddressType:
     is_city = lambda prov, arg: (
         match_pattern(f"{prov} city", arg) or match_pattern(f"city of {prov}", arg)
     )
@@ -94,7 +99,7 @@ def match_province(arg: str) -> Union[tuple[str, dict], None]:
             return (res[1], province_dict)
 
 
-def match_street(arg: str) -> Union[tuple[str, dict], None]:
+def match_street(arg: str) -> ParsedAddressType:
     address_building = None
     address_street = None
     stripped = arg
@@ -127,13 +132,13 @@ def match_street(arg: str) -> Union[tuple[str, dict], None]:
         return (stripped, address_dict)
 
 
-def match_subdivision(arg: str) -> Union[tuple[str, dict], None]:
+def match_subdivision(arg: str) -> ParsedAddressType:
     if res := match_in_between_pattern(
         r"(.*?)subdivision+\b", arg, before="", after="Subdivision"
     ):
         return (res[1], {"subdivision": res[0]})
 
 
-def match_zip_code(arg: str) -> Union[tuple[str, dict], None]:
+def match_zip_code(arg: str) -> ParsedAddressType:
     if res := match_pattern(r"\d{4}", arg):
         return (res[1], {"zip_code": res[0]})
