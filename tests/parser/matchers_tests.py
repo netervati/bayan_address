@@ -204,7 +204,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
     [
         (
             "Berry",
-            ["berry", ""],
+            [""],
             [
                 None,
                 ("Berry", ""),
@@ -214,7 +214,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
         ),
         (
             "Berry Ire City",
-            ["berry", "ire city", "union city"],
+            ["ire city", "berry", "union city"],
             [
                 None,
                 ("Berry", "Ire City"),
@@ -227,7 +227,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
         ),
         (
             "Union Faraway",
-            ["berry", "union city"],
+            ["berry", "union city", "union city"],
             [
                 None,
                 None,
