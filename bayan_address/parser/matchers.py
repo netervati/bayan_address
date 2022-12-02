@@ -36,7 +36,7 @@ def match_address_type(val: str) -> dict:
 
 def match_administrative_region(arg: str) -> ParsedAddressType:
     if res := match_pattern("metro manila", arg):
-        return (res[1], {"administrative_region": res[0]})
+        return (res.stripped, {"administrative_region": res.address_type})
 
 
 def match_barangay(arg: str) -> ParsedAddressType:
@@ -59,7 +59,7 @@ def match_city(arg: str) -> ParsedAddressType:
         # type (e.g. parser should not treat San Jose in
         # San Jose Zamboanga City as city)
         if res := match_pattern(el, stripped):
-            if "city" in clean_str(res[1]):
+            if "city" in clean_str(res.stripped):
                 if res_b := match_pattern(f"{el} city", stripped):
                     return res_b
                 else:
@@ -76,8 +76,8 @@ def match_city(arg: str) -> ParsedAddressType:
 
     for el in CITIES:
         if res := city_patterns(el, stripped):
-            address_city = res[0]
-            stripped = res[1]
+            address_city = res.address_type
+            stripped = res.stripped
 
         if address_city:
             break
@@ -95,8 +95,8 @@ def match_province(arg: str) -> ParsedAddressType:
         if is_city(el, arg):
             return
         elif res := match_pattern(el, arg):
-            province_dict = {"province": res[0]} | PROVINCES[el]
-            return (res[1], province_dict)
+            province_dict = {"province": res.address_type} | PROVINCES[el]
+            return (res.stripped, province_dict)
 
 
 def match_street(arg: str) -> ParsedAddressType:
@@ -113,12 +113,12 @@ def match_street(arg: str) -> ParsedAddressType:
                 after=x,
             ):
                 if resb := match_pattern(r"\b\d+\b", res[0]):
-                    address_street = resb[1]
-                    address_building = resb[0]
-                    stripped = res[1]
+                    address_street = resb.stripped
+                    address_building = resb.address_type
+                    stripped = res.stripped
                     break
-                address_street = res[0]
-                stripped = res[1]
+                address_street = res.address_type
+                stripped = res.stripped
                 break
 
         if address_street:
@@ -136,9 +136,9 @@ def match_subdivision(arg: str) -> ParsedAddressType:
     if res := match_in_between_pattern(
         r"(.*?)subdivision+\b", arg, before="", after="Subdivision"
     ):
-        return (res[1], {"subdivision": res[0]})
+        return (res.stripped, {"subdivision": res.address_type})
 
 
 def match_zip_code(arg: str) -> ParsedAddressType:
     if res := match_pattern(r"\d{4}", arg):
-        return (res[1], {"zip_code": res[0]})
+        return (res.stripped, {"zip_code": res.address_type})

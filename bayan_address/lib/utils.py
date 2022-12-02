@@ -1,4 +1,8 @@
 import re
+from collections import namedtuple
+
+
+MatchResult = namedtuple("MatchResult", "address_type stripped")
 
 
 def clean_str(val: str) -> str:
@@ -16,7 +20,7 @@ def is_valid_str(val: str) -> bool:
 def match_in_between_pattern(*args: tuple, **kwargs: dict) -> tuple[str, str]:
     if result := re.search(args[0], args[1], re.IGNORECASE):
         substr = f"{kwargs['before'].capitalize()}{result.group(1)}{kwargs['after'].capitalize()}"
-        return (substr.strip(), replace_str(substr, args[1]))
+        return MatchResult(substr.strip(), replace_str(substr, args[1]))
 
 
 def match_pattern(arg1: str, arg2: str) -> tuple[str, str]:
@@ -24,7 +28,7 @@ def match_pattern(arg1: str, arg2: str) -> tuple[str, str]:
     result = pattern.findall(arg2)
 
     if len(result) > 0:
-        return (result[0].strip(), replace_str(result[0], arg2))
+        return MatchResult(result[0].strip(), replace_str(result[0], arg2))
 
 
 def replace_str(substring: str, string: str) -> str:
