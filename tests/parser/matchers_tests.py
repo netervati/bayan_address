@@ -1,6 +1,6 @@
 import pytest
+from collections import namedtuple
 from bayan_address.parser.matchers import (
-    match_address_type,
     match_administrative_region,
     match_barangay,
     match_city,
@@ -12,6 +12,7 @@ from bayan_address.parser.matchers import (
 
 
 MOCK_PATH = "bayan_address.parser.matchers."
+MatchResult = namedtuple("MatchResult", "address_type stripped")
 
 
 @pytest.fixture
@@ -44,41 +45,6 @@ def street_format_fixture():
 
 
 @pytest.fixture
-def mock_matchadministrativeregion(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_administrative_region")
-
-
-@pytest.fixture
-def mock_matchprovince(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_province")
-
-
-@pytest.fixture
-def mock_matchzipcode(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_zip_code")
-
-
-@pytest.fixture
-def mock_matchcity(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_city")
-
-
-@pytest.fixture
-def mock_matchstreet(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_street")
-
-
-@pytest.fixture
-def mock_matchsubdivision(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_subdivision")
-
-
-@pytest.fixture
-def mock_matchbarangay(mocker):
-    return mocker.patch(f"{MOCK_PATH}match_barangay")
-
-
-@pytest.fixture
 def mock_matchinbetweenpattern(mocker):
     return mocker.patch(f"{MOCK_PATH}match_in_between_pattern")
 
@@ -104,73 +70,10 @@ def mock_replacestr(mocker):
 
 
 @pytest.mark.parametrize(
-    ["arg", "mocked_result", "result"],
-    [
-        (
-            "corner st. brgy. ville far city ncr 1000",
-            [
-                (
-                    "corner st. brgy. ville far city 1000",
-                    {"administrative_region": "ncr"},
-                ),
-                None,
-                ("corner st. brgy. ville far city", {"zip_code": "1000"}),
-                ("corner st. brgy. ville", {"city": "far city"}),
-                ("brgy. ville", {"street": "corner st."}),
-                None,
-                ("", {"barangay": "brgy. ville"}),
-            ],
-            {
-                "administrative_region": "ncr",
-                "zip_code": "1000",
-                "city": "far city",
-                "street": "corner st.",
-                "barangay": "brgy. ville",
-            },
-        ),
-        (
-            "",
-            [
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-                None,
-            ],
-            {},
-        ),
-    ],
-)
-def test_match_address_type(
-    arg,
-    mock_matchadministrativeregion,
-    mock_matchbarangay,
-    mock_matchcity,
-    mock_matchprovince,
-    mock_matchstreet,
-    mock_matchsubdivision,
-    mock_matchzipcode,
-    mocked_result,
-    result,
-):
-    mock_matchadministrativeregion.return_value = mocked_result[0]
-    mock_matchprovince.return_value = mocked_result[1]
-    mock_matchzipcode.return_value = mocked_result[2]
-    mock_matchcity.return_value = mocked_result[3]
-    mock_matchstreet.return_value = mocked_result[4]
-    mock_matchsubdivision.return_value = mocked_result[5]
-    mock_matchbarangay.return_value = mocked_result[6]
-
-    assert match_address_type(arg) == result
-
-
-@pytest.mark.parametrize(
     ["arg", "result"],
     [
         ("test", None),
-        ("metro manila", ("metro manila", "")),
+        ("metro manila", MatchResult("metro manila", "")),
     ],
 )
 def test_match_administrative_region(arg, mock_matchpattern, result):
@@ -207,7 +110,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
             [""],
             [
                 None,
-                ("Berry", ""),
+                MatchResult("Berry", ""),
             ],
             None,
             ("", {"city": "Berry"}),
@@ -217,7 +120,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
             ["ire city", "berry", "union city"],
             [
                 None,
-                ("Berry", "Ire City"),
+                MatchResult("Berry", "Ire City"),
                 None,
                 None,
                 None,
@@ -231,7 +134,7 @@ def test_match_barangay(arg, isvalidstr, mock_isvalidstr):
             [
                 None,
                 None,
-                ("Union City", "Faraway"),
+                MatchResult("Union City", "Faraway"),
             ],
             None,
             ("Faraway", {"city": "Union"}),
@@ -264,7 +167,7 @@ def test_match_city(
             [
                 None,
                 None,
-                ("Faraway", ""),
+                MatchResult("Faraway", ""),
             ],
             True,
         ),
@@ -276,14 +179,14 @@ def test_match_city(
                 None,
                 None,
                 None,
-                ("La Paz", ""),
+                MatchResult("La Paz", ""),
             ],
             True,
         ),
         (
             "Faraway city",
             [
-                ("Faraway city", ""),
+                MatchResult("Faraway city", ""),
             ],
             False,
         ),
@@ -323,7 +226,7 @@ def test_match_province(
                 None,
                 None,
                 None,
-                ("Corner Street", ""),
+                MatchResult("Corner Street", ""),
             ],
             [None],
             ("", {"street": "Corner Street"}),
@@ -333,9 +236,9 @@ def test_match_province(
             [
                 None,
                 None,
-                ("24 La Porez St.", ""),
+                MatchResult("24 La Porez St.", ""),
             ],
-            [("24", "La Porez St.")],
+            [MatchResult("24", "La Porez St.")],
             ("", {"building": "24", "street": "La Porez St."}),
         ),
     ],
@@ -360,7 +263,7 @@ def test_match_street(
 
 @pytest.mark.parametrize(
     ["arg", "matchinbetweenpattern"],
-    [("Wide Subdivision", ["Wide Subdivision", ""]), ("Dela Santos", None)],
+    [("Wide Subdivision", MatchResult("Wide Subdivision", "")), ("Dela Santos", None)],
 )
 def test_match_subdivision(arg, matchinbetweenpattern, mock_matchinbetweenpattern):
     mock_matchinbetweenpattern.return_value = matchinbetweenpattern
@@ -375,7 +278,7 @@ def test_match_subdivision(arg, matchinbetweenpattern, mock_matchinbetweenpatter
 
 @pytest.mark.parametrize(
     ["arg", "matchpattern"],
-    [("1000", ["1000", ""]), ("Faraway", None)],
+    [("1000", MatchResult("1000", "")), ("Faraway", None)],
 )
 def test_match_zip_code(arg, matchpattern, mock_matchpattern):
     mock_matchpattern.return_value = matchpattern
