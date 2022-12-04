@@ -8,30 +8,15 @@ from bayan_address.lib.utils import (
     replace_str,
 )
 
-
-def match_address_type(val: str) -> dict:
-    address = {}
-    matchers = [
-        match_administrative_region,
-        match_province,
-        match_zip_code,
-        match_city,
-        match_street,
-        match_subdivision,
-        match_barangay,
-    ]
-    stripped = val
-
-    for parse in matchers:
-        if result := parse(stripped):
-            stripped = result[0]
-            address |= result[1]
-
-    return address
-
-
-# Matchers based on the address type
-# ==================================
+__all__ = [
+    "match_administrative_region",
+    "match_province",
+    "match_zip_code",
+    "match_city",
+    "match_street",
+    "match_subdivision",
+    "match_barangay",
+]
 
 
 def match_administrative_region(arg: str) -> ParsedAddressType:
@@ -59,19 +44,18 @@ def match_city(arg: str) -> ParsedAddressType:
         # type (e.g. parser should not treat San Jose in
         # San Jose Zamboanga City as city)
         if res := match_pattern(el, stripped):
-            if "city" in clean_str(res.stripped):
-                if res_b := match_pattern(f"{el} city", stripped):
-                    return res_b
-                else:
-                    return
-            else:
+            if "city" not in clean_str(res.stripped):
                 return res
+            if res_b := match_pattern(f"{el} city", stripped):
+                return res_b
+            return
 
         # Ensures that if city with "City" in name will match
         # with address that has no City (e.g. Quezon City == Quezon)
         if "city" in clean_str(el):
-            cleaned_element = replace_str("city", clean_str(el)).strip()
-            if res := match_pattern(cleaned_element, stripped):
+            if res := match_pattern(
+                replace_str("city", clean_str(el)).strip(), stripped
+            ):
                 return res
 
     for el in CITIES:
@@ -87,16 +71,11 @@ def match_city(arg: str) -> ParsedAddressType:
 
 
 def match_province(arg: str) -> ParsedAddressType:
-    is_city = lambda prov, arg: (
-        match_pattern(f"{prov} city", arg) or match_pattern(f"city of {prov}", arg)
-    )
-
     for el in PROVINCES:
-        if is_city(el, arg):
+        if match_pattern(f"{el} city", arg) or match_pattern(f"city of {el}", arg):
             return
-        elif res := match_pattern(el, arg):
-            province_dict = {"province": res.address_type} | PROVINCES[el]
-            return (res.stripped, province_dict)
+        if res := match_pattern(el, arg):
+            return (res.stripped, {"province": res.address_type} | PROVINCES[el])
 
 
 def match_street(arg: str) -> ParsedAddressType:
