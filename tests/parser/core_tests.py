@@ -67,7 +67,10 @@ def mock_matchbarangay(mocker):
             "  24 Test Street Brgy. Lorem Ipsum City Somewhere Province 8000  ",
             [
                 None,
-                ("24 Test Street Brgy. Lorem Ipsum City 8000", {"province": "Somewhere Province"}),
+                (
+                    "24 Test Street Brgy. Lorem Ipsum City 8000",
+                    {"province": "Somewhere Province"},
+                ),
                 ("24 Test Street Brgy. Lorem Ipsum City", {"zip_code": "8000"}),
                 ("24 Test Street Brgy. Lorem", {"city": "Ipsum City"}),
                 ("Brgy. Lorem", {"building": "24", "street": "Test Street"}),
