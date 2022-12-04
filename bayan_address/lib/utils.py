@@ -9,10 +9,6 @@ def clean_str(val: str) -> str:
     return val.lower().strip()
 
 
-def concat_str(arg1: str, arg2: str) -> str:
-    return f"{arg1.strip()} {arg2.strip()}".strip()
-
-
 def is_valid_str(val: str) -> bool:
     return isinstance(val, str) and val.strip() != ""
 

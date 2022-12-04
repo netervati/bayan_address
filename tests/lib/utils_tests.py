@@ -1,7 +1,6 @@
 import pytest
 from bayan_address.lib.utils import (
     clean_str,
-    concat_str,
     match_in_between_pattern,
     match_pattern,
     is_valid_str,
@@ -29,18 +28,6 @@ def mock_replacestr(mocker):
 )
 def test_clear_str(arg, result):
     assert clean_str(arg) == result
-
-
-@pytest.mark.parametrize(
-    ["arg1", "arg2", "result"],
-    [
-        ("Sta.", "Anna", "Sta. Anna"),
-        (" Brgy.", "barrio ", "Brgy. barrio"),
-        ("  Salva  ", "  Street  ", "Salva Street"),
-    ],
-)
-def test_concat_str(arg1, arg2, result):
-    assert concat_str(arg1, arg2) == result
 
 
 @pytest.mark.parametrize(
