@@ -8,7 +8,7 @@ class BayanAddress:
         if not is_valid_str(address):
             raise InvalidValue(address)
 
-        self.parsed_address = {}
+        self.parsed_address: dict[str, str] = {}
 
         matchers = [
             match_administrative_region,

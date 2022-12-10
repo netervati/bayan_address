@@ -1,8 +1,5 @@
 import re
-from collections import namedtuple
-
-
-MatchResult = namedtuple("MatchResult", "address_type stripped")
+from bayan_address.lib._typings import MatchPattern, MatchResult
 
 
 def clean_str(val: str) -> str:
@@ -13,18 +10,22 @@ def is_valid_str(val: str) -> bool:
     return isinstance(val, str) and val.strip() != ""
 
 
-def match_in_between_pattern(*args: tuple, **kwargs: dict) -> tuple[str, str]:
-    if result := re.search(args[0], args[1], re.IGNORECASE):
-        substr = f"{kwargs['before'].capitalize()}{result.group(1)}{kwargs['after'].capitalize()}"
-        return MatchResult(substr.strip(), replace_str(substr, args[1]))
+def match_in_between_pattern(
+    pattern: str, token: str, before: str, after: str
+) -> MatchPattern:
+    if result := re.search(pattern, token, re.IGNORECASE):
+        substr = f"{before.capitalize()}{result.group(1)}{after.capitalize()}"
+        return MatchResult(substr.strip(), replace_str(substr, token))
+    return None
 
 
-def match_pattern(arg1: str, arg2: str) -> tuple[str, str]:
+def match_pattern(arg1: str, arg2: str) -> MatchPattern:
     pattern = re.compile(arg1, re.IGNORECASE)
     result = pattern.findall(arg2)
 
     if len(result) > 0:
         return MatchResult(result[0].strip(), replace_str(result[0], arg2))
+    return None
 
 
 def replace_str(substring: str, string: str) -> str:

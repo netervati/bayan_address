@@ -1,4 +1,6 @@
-from typing import Union
+from typing import Union, NamedTuple
 
 
-ParsedAddressType = Union[tuple[str, dict], None]
+MatchResult = NamedTuple("MatchResult", [("address_type", str), ("stripped", str)])
+MatchPattern = Union[MatchResult, None]
+ParsedAddressType = Union[tuple[str, dict[str, str]], None]
