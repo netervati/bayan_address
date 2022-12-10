@@ -1,4 +1,5 @@
-from bayan_address.lib._typings import ParsedAddressType
+from typing import Union
+from bayan_address.lib._typings import MatchPattern, ParsedAddressType
 from bayan_address.lib.data import ADDRESS_PREFIX, CITIES, PROVINCES, STREET_FORMAT
 from bayan_address.lib.utils import (
     clean_str,
@@ -35,7 +36,7 @@ def match_city(arg: str) -> ParsedAddressType:
     address_city = None
     stripped = arg
 
-    def city_patterns(el, stripped):
+    def city_patterns(el: str, stripped: str) -> Union[MatchPattern, None]:
         # Ensures that if city with no "City" in name will match
         # with address that has City (e.g. Quezon == Quezon City)
         if res := match_pattern(f"{el} city", stripped):
