@@ -22,11 +22,13 @@ __all__ = [
 def match_administrative_region(arg: str) -> ParsedAddressType:
     if res := match_pattern("metro manila", arg):
         return (res.stripped, {"administrative_region": res.address_type})
+    return None
 
 
 def match_barangay(arg: str) -> ParsedAddressType:
     if is_valid_str(arg):
         return ("", {"barangay": arg.strip()})
+    return None
 
 
 def match_city(arg: str) -> ParsedAddressType:
@@ -48,7 +50,7 @@ def match_city(arg: str) -> ParsedAddressType:
                 return res
             if res_b := match_pattern(f"{el} city", stripped):
                 return res_b
-            return
+            return None
 
         # Ensures that if city with "City" in name will match
         # with address that has no City (e.g. Quezon City == Quezon)
@@ -57,6 +59,7 @@ def match_city(arg: str) -> ParsedAddressType:
                 replace_str("city", clean_str(el)).strip(), stripped
             ):
                 return res
+        return None
 
     for el in CITIES:
         if res := city_patterns(el, stripped):
@@ -68,14 +71,16 @@ def match_city(arg: str) -> ParsedAddressType:
 
     if address_city:
         return (stripped, {"city": address_city})
+    return None
 
 
 def match_province(arg: str) -> ParsedAddressType:
     for el in PROVINCES:
         if match_pattern(f"{el} city", arg) or match_pattern(f"city of {el}", arg):
-            return
+            return None
         if res := match_pattern(el, arg):
             return (res.stripped, {"province": res.address_type} | PROVINCES[el])
+    return None
 
 
 def match_street(arg: str) -> ParsedAddressType:
@@ -109,6 +114,7 @@ def match_street(arg: str) -> ParsedAddressType:
             address_dict |= {"building": address_building}
 
         return (stripped, address_dict)
+    return None
 
 
 def match_subdivision(arg: str) -> ParsedAddressType:
@@ -116,8 +122,10 @@ def match_subdivision(arg: str) -> ParsedAddressType:
         r"(.*?)subdivision+\b", arg, before="", after="Subdivision"
     ):
         return (res.stripped, {"subdivision": res.address_type})
+    return None
 
 
 def match_zip_code(arg: str) -> ParsedAddressType:
     if res := match_pattern(r"\d{4}", arg):
         return (res.stripped, {"zip_code": res.address_type})
+    return None
