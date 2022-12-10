@@ -8,6 +8,7 @@ pdoc3 = "*"
 pytest = "*"
 pytest-mock = "*"
 black = "*"
+mypy = "*"
 
 [dev-packages]
 

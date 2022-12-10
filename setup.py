@@ -17,6 +17,7 @@ setup(
     author_email="netervati@gmail.com",
     license="MIT License",
     packages=["bayan_address", "bayan_address/parser", "bayan_address/lib"],
+    package_data={"bayan_address": ["py.typed"]},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Information Technology",
